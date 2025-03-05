@@ -26,50 +26,50 @@ final class NameSanitizesTest extends TestCase
 
     public function testNameSanitization()
     {
-        // ✅ Basic valid names should remain unchanged
+        // Basic valid names should remain unchanged
         $this->good("John", "John");
         $this->good("Mary Ann", "Mary Ann");
         $this->good("Jean-Pierre", "Jean-Pierre");
         $this->good("O'Brien", "O'Brien");
 
-        // ✅ Extra spaces should be collapsed
+        // Extra spaces should be collapsed
         $this->good("John Doe", "John   Doe");
         $this->good("Mary Ann", "  Mary    Ann  ");
 
-        // ✅ Non-Latin characters should be removed
+        // Non-Latin characters should be removed
         $this->good("John", "John!!!");
         $this->good("John", "John@#%^");
         $this->good("O'Brien", "O``Brien");
 
-        // ✅ Multiple dashes should be reduced to one
+        // Multiple dashes should be reduced to one
         $this->good("Jean-Pierre", "Jean--Pierre");
         $this->good("Jean-Pierre", "Jean---Pierre");
 
-        // ✅ Multiple apostrophes should be reduced to one
+        // Multiple apostrophes should be reduced to one
         $this->good("O'Brien", "O''Brien");
         $this->good("O'Brien", "O'''Brien");
 
-        // ✅ Remove repeated apostrophe/dash combinations
+        // Remove repeated apostrophe/dash combinations
         $this->good("Jean-Pierre", "Jean--```-Pierre");
 
-        // ✅ Ensure dashes and apostrophes attach to words correctly
+        // Ensure dashes and apostrophes attach to words correctly
         $this->good("De'Aundra", "De' Aundra");
         $this->good("Jean-Pierre", "Jean - Pierre");
         $this->good("Jean-Pierre", "Jean  -  Pierre");
 
-        // ✅ Trim leading and trailing spaces, dashes, and apostrophes
+        // Trim leading and trailing spaces, dashes, and apostrophes
         $this->good("John", "   John   ");
         $this->good("John", "---John---");
         $this->good("O'Brien", "'O'Brien'");
         $this->good("Jean-Pierre", "-Jean-Pierre-");
 
-        // ✅ Names should not exceed 32 characters
+        // Names should not exceed 32 characters
         // Trim leading/trailing spaces, dashes, and apostrophes after truncating to 32 characters.
         // The 32-character limit is set because real-world name entries typically don't exceed this length.
         $this->good("Alexandrianna-Joanne McCallister", "Alexandrianna-Joanne McCallister");
         $this->good("Alexandrianna-Joanne McCallister", "Alexandrianna-Joanne McCallister the Third");
 
-        // ✅ Non-Latin names should be rejected
+        // Non-Latin names should be rejected
         $this->error("Александр");
         $this->error("山田太郎");
         $this->error("محمد");
