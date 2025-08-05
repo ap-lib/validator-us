@@ -9,6 +9,8 @@ use Attribute;
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
 class NameSanitizes extends AbstractString
 {
+    public const int LENGTH_MAX = 32;
+
     /**
      * @param string $message Error message displayed when validation fails.
      */
@@ -52,7 +54,7 @@ class NameSanitizes extends AbstractString
         // The limit is set to 32 because users may enter multiple names in a single form field.
         // Observations show that name combinations typically don't exceed 32 characters.
         $str = trim(
-            mb_substr($str, 0, 32),
+            mb_substr($str, 0, self::LENGTH_MAX),
             " -'"
         );
 

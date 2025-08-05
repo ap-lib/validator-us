@@ -9,6 +9,8 @@ use Attribute;
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
 class CitySanitizes extends AbstractString
 {
+    public const int LENGTH_MAX = 32;
+
     /**
      * @param string $message Error message displayed when validation fails.
      */
@@ -56,7 +58,7 @@ class CitySanitizes extends AbstractString
         // The 32-character limit is set based on real-world user input data, where the longest known U.S. city name
         // is "City of the Village of Clarkston"
         $str = trim(
-            mb_substr($str, 0, 32),
+            mb_substr($str, 0, self::LENGTH_MAX),
             " -',."
         );
 
