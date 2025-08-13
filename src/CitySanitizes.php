@@ -6,7 +6,7 @@ use AP\ErrorNode\Errors;
 use AP\Validator\String\AbstractString;
 use Attribute;
 
-#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY)]
+#[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 class CitySanitizes extends AbstractString
 {
     public const int LENGTH_MAX = 32;
