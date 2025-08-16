@@ -22,7 +22,20 @@ final class SSNSanitizerTest extends TestCase
         $this->assertInstanceOf(Errors::class, $validationResult);
     }
 
-    public function testNameSanitization()
+    public function sanitize_good(int $expected, mixed $actual)
+    {
+        $validationResult = (new SSNSanitizer())->sanitize($actual);
+        $this->assertTrue($validationResult);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function sanitize_error(mixed $actual)
+    {
+        $validationResult = (new SSNSanitizer)->sanitize($actual);
+        $this->assertInstanceOf(Errors::class, $validationResult);
+    }
+
+    public function testValidation()
     {
         $this->good(123456789, 123456789);
         $this->good(123456789, "123456789");
@@ -36,5 +49,14 @@ final class SSNSanitizerTest extends TestCase
 
         $this->error('666-77-8888'); // bad format
         $this->error('468-28-8779'); // from bad list
+    }
+
+    public function testSanitize()
+    {
+        $this->sanitize_good(123456789123, 123456789123);
+        $this->sanitize_good(123456789123, "123456789123");
+
+        $this->sanitize_error(null); // bad format
+        $this->sanitize_error(["hello world"]); // from bad list
     }
 }

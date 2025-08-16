@@ -42,6 +42,20 @@ class SSNSanitizer implements ValidatorInterface
         549241889 => true,
     ];
 
+    final public function sanitize(mixed &$val): true|Errors
+    {
+        if (is_string($val)) {
+            $val = (int)preg_replace(
+                "/[^\\d]/",
+                "",
+                $val
+            );
+        } elseif (!is_int($val)) {
+            return Errors::one("must be a string or integer");
+        }
+        return true;
+    }
+
     final public function validate(mixed &$val): true|Errors
     {
         if (is_string($val)) {
