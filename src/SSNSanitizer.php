@@ -5,6 +5,7 @@ namespace AP\Validator\US;
 use AP\ErrorNode\Errors;
 use AP\Validator\ValidatorInterface;
 use Attribute;
+use RuntimeException;
 
 #[Attribute(Attribute::IS_REPEATABLE | Attribute::TARGET_METHOD | Attribute::TARGET_PROPERTY | Attribute::TARGET_PARAMETER)]
 class SSNSanitizer implements ValidatorInterface
@@ -51,21 +52,20 @@ class SSNSanitizer implements ValidatorInterface
                 $val
             );
         } elseif (!is_int($val)) {
-            return Errors::one("must be a string or integer");
+            return Errors::one($this->message_format);
         }
         return true;
     }
 
     final public function validate(mixed &$val): true|Errors
     {
-        if (is_string($val)) {
-            $val = (int)preg_replace(
-                "/[^\\d]/",
-                "",
-                $val
-            );
-        } elseif (!is_int($val)) {
-            return Errors::one("must be a string or integer");
+        $res = $this->sanitize($val);
+        if ($res instanceof Errors) {
+            return $res;
+        }
+
+        if (!is_int($val)) {
+            throw new RuntimeException('post-condition: ssn must be converted to int');
         }
 
         if (!preg_match(
