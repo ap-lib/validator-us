@@ -27,32 +27,12 @@ class PhoneSanitizer implements ValidatorInterface
     final public function sanitize(mixed &$val): true|Errors
     {
         if (is_string($val)) {
-            $val = preg_replace(
+            $val = (int)preg_replace(
                 "/[^\\d]/",
                 "",
                 $val
             );
-
-            // remove an international code
-            if (
-                $this->remove_international_code
-                && strlen($val) == 11
-                && str_starts_with($val, '1')
-            ) {
-                $val = substr($val, 1);
-            }
-
-            $val = (int)$val;
-        } elseif (is_int($val)) {
-            // remove an international code
-            if (
-                $this->remove_international_code
-                && $val > 999_999_9999 &&
-                $val < 2_000_000_0000
-            ) {
-                $val = (int)substr((string)$val, 1);
-            }
-        } else {
+        } elseif (!is_int($val)) {
             return Errors::one($this->message_invalid_format);
         }
         return true;
@@ -69,6 +49,15 @@ class PhoneSanitizer implements ValidatorInterface
             throw new RuntimeException(
                 'post-condition: phone must be converted to int'
             );
+        }
+
+        // remove an international code
+        if (
+            $this->remove_international_code
+            && $val > 999_999_9999 &&
+            $val < 2_000_000_0000
+        ) {
+            $val = (int)substr((string)$val, 1);
         }
 
         // Format
